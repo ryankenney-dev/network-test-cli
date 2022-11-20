@@ -29,18 +29,13 @@ fi
 $DOCKER_COMMAND build --pull -t "network-test-cli:local-build" .
 
 # Run the docker container
-rm -f "${SCRIPT_DIR}/target/${SCRIPT_FILE}.csv"
+TARGET_FILE="${SCRIPT_FILE}.$(date '+%Y-%m-%d_%H-%M-%S').csv"
 $DOCKER_COMMAND run -it --rm \
-    --security-opt label=disable \
-    -v "$PWD/target/:/target/:rw" \
-    "network-test-cli:local-build" \
-    header \
-        "/target/${SCRIPT_FILE}.csv"
-$DOCKER_COMMAND run -it --rm \
+    --user "$DOCKER_MOUNT_USER" \
     --security-opt label=disable \
     -v "$PWD/target/:/target/:rw" \
     "network-test-cli:local-build" \
     test \
         "https://github.com/ableco/test-files/blob/master/images/test-image-png_4032x3024.png?raw=true" \
-        "/target/${SCRIPT_FILE}.csv"
+        "/target/${TARGET_FILE}"
 
